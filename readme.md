@@ -9,7 +9,7 @@ Tests:
 // boolean checks
 const earth = 'round';
 
-console.log(earth === 'flat); // true
+console.log(earth === 'flat'); // true
 console.log(!!earth) // false
 console.log(earth.makeRound()) // Error: "But it's flat!"
 
