@@ -1,13 +1,3 @@
-// outputs like :
-// [
-//     { city: 'Glasgow', weather: 'Cold' },
-//     { city: 'London', weather: 'Chilly' },
-//     { city: 'Brussels', weather: 'Chilly' },
-//     { city: 'Tokyo', weather: 'Monsoon' },
-//     { city: 'Honolulu', weather: 'Stormy' },
-//     { city: 'Los-Angeles', weather: 'Sunny' },
-// ]
-
 const geodata = [
   { Glasgow: [55.852059, -4.095055] },
   { London: [51.503892, -0.002505] },
@@ -22,6 +12,7 @@ const weatherStations = [
     lat: 33.517941,
     lng: -111.689978,
     weather: "Sunny",
+    // CAPITAL "L" <----- ARGH!
     Location: "Arizona US"
   },
   {
@@ -49,3 +40,31 @@ const weatherStations = [
     Location: "Taiwan"
   }
 ];
+
+// SOLUTION
+
+const { haversineDistance } = require('./helpers');
+
+const jamal = () => (data, stations) => data
+  .map(place =>
+    stations
+      .map(({ weather, lat, lng }) =>
+        ({ city: Object.keys(place)[0], weather, distance: haversineDistance(place[Object.keys(place)[0]], [lat, lng]) }))
+      .sort((a, b) => a.distance > b.distance)
+      .shift()
+  ).reduce((p, { city, weather }) => [...p, { city, weather }], []);
+
+const gen = jamal();
+const result = gen(geodata, weatherStations);
+
+console.log(result);
+
+// outputs like :
+// [
+//     { city: 'Glasgow', weather: 'Cold' },
+//     { city: 'London', weather: 'Chilly' },
+//     { city: 'Brussels', weather: 'Chilly' },
+//     { city: 'Tokyo', weather: 'Monsoon' },
+//     { city: 'Honolulu', weather: 'Stormy' },
+//     { city: 'Los-Angeles', weather: 'Sunny' },
+// ]
